@@ -12,6 +12,11 @@ export default async function handler(req, res) {
   for await (const chunk of req) {
     chunks.push(chunk);
   }
+  const form = formidable({
+  multiples: false,
+  keepExtensions: true,
+  uploadDir: "/tmp",
+    });
 
   const buffer = Buffer.concat(chunks);
 
