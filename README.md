@@ -1,16 +1,35 @@
-# React + Vite
+An AI-powered web app that records audio, transcribes it in real time, and generates actionable meeting suggestions.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Features
 
-Currently, two official plugins are available:
+- **Audio Recording**
+  - Record audio directly in the browser using the MediaRecorder API
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Transcription**
+  - Converts speech → text using Groq Whisper (`whisper-large-v3`)
 
-## React Compiler
+- **AI Suggestions**
+  - Generates structured suggestions from transcripts
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Customizable Suggestions**
+  - Users can select what types of suggestions they want
 
-## Expanding the ESLint configuration
+- **Chat (Coming Soon)**
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## Tech Stack
+
+**Frontend**
+- React (Vite)
+- MediaRecorder API
+
+**Backend (Serverless)**
+- Vercel Functions (`/api/*`)
+- formidable (file upload parsing)
+
+**AI**
+- Groq API
+  - Speech-to-text: `whisper-large-v3`
+  - LLM: `openai/gpt-oss-120b`
+
