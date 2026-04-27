@@ -6,41 +6,58 @@ export const config = {
   api: { bodyParser: false },
 };
 
+function parseForm(req) {
+  return new Promise((resolve, reject) => {
+    const form = formidable({
+      multiples: false,
+      keepExtensions: true,
+    });
+
+    form.parse(req, (err, fields, files) => {
+      if (err) reject(err);
+      else resolve({ fields, files });
+    });
+  });
+}
+
 export default async function handler(req, res) {
-  const apiKey = req.headers["x-groq-api-key"];
-  const groq = new Groq({ apiKey });
+  try {
+    const apiKey = req.headers["x-groq-api-key"];
 
-  const chunks = [];
-  for await (const chunk of req) {
-    chunks.push(chunk);
-  }
-
-    try{
-      const filePath = req.file.path;
-      const transcription = await groq.audio.transcriptions.create({
-        file: fs.createReadStream(filePath),
-        model: "whisper-large-v3"
-      });
-      fs.unlinkSync(filePath);
-      res.json({ text:transcription.text });
-    } catch (error) {
-      console.error("Error transcribing audio:", error);
-      res.status(500).json({ error: "Failed to transcribe audio" });
+    if (!apiKey) {
+      return res.status(401).json({ error: "Missing Groq API key" });
     }
-/*     const form = formidable({
-    multiples: false,
-    keepExtensions: true,
-    maxFileSize: 25 * 1024 * 1024,
-      });
 
-    const buffer = Buffer.concat(chunks);
+    const { files } = await parseForm(req);
+
+    console.log("FILES:", files);
+
+    const audioFile = Array.isArray(files.audio)
+      ? files.audio[0]
+      : files.audio;
+
+    if (!audioFile) {
+      return res.status(400).json({ error: "No audio file uploaded" });
+    }
 
     const filePath = audioFile.filepath || audioFile.path;
 
-    const transcription = await groq.audio.transcriptions.create({
-        file: fs.createReadStream(filePath),
-        model: "whisper-large-v3",
-      }); */
+    console.log("FILE PATH:", filePath);
 
-  res.status(200).json({ text: transcription.text });
+    const groq = new Groq({ apiKey });
+
+    const transcription = await groq.audio.transcriptions.create({
+      file: fs.createReadStream(filePath),
+      model: "whisper-large-v3",
+    });
+
+    return res.status(200).json({ text: transcription.text });
+  } catch (error) {
+    console.error("Error transcribing audio:", error);
+
+    return res.status(500).json({
+      error: "Failed to transcribe audio",
+      details: error.message,
+    });
+  }
 }

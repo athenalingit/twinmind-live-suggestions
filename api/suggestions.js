@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   const completion = await groq.chat.completions.create({
     model: "openai/gpt-oss-120b",
     messages: [
-      { role: "system", content: "Give 3 suggestions: Ask, Insight, Clarify" },
+      { role: "system", content: "You are a helpful assistant that generates suggestions based on meeting transcripts. You provide three types of suggestions: 1) Ask: A clarifying question to ask the team, 2) Insight: An insight or observation about the project, 3) Clarify: A point that needs clarification or further discussion." },
       { role: "user", content: transcript },
     ],
   });
