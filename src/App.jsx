@@ -24,10 +24,7 @@ function App() {
       const formData = new FormData();
       formData.append("audio", blob, "recording.webm");
 
-  console.log("Blob size:", blob.size); //delete
-  console.log("Blob type:", blob.type); //dete 
-
-  setAudioUrl(URL.createObjectURL(blob));
+      setAudioUrl(URL.createObjectURL(blob));
 
       const res = await fetch("/api/transcribe", {
         method: "POST",
