@@ -8,6 +8,25 @@ function App() {
   const [audioUrl, setAudioUrl] = useState(null);
   const [apiKey, setApiKey] = useState("");
 
+  //settings panel to change suggestions type
+  const [suggestionTypes, setSuggestionTypes] = useState([
+  "Ask",
+  "Insight",
+  "Clarify",
+  "Action Item",
+  "Risk",
+  "Follow-up",
+  "Summary"
+  ]);
+
+  const toggleSuggestionType = (type) => {
+  setSuggestionTypes((prev) =>
+    prev.includes(type)
+      ? prev.filter((t) => t !== type)
+      : [...prev, type]
+  );
+};
+
   const startRecording = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const recorder = new MediaRecorder(stream);
@@ -57,7 +76,7 @@ function App() {
         "Content-Type": "application/json",
         "x-groq-api-key": apiKey,
       },
-      body: JSON.stringify({ transcript }),
+      body: JSON.stringify({ transcript, suggestionTypes }),
     });
 
     const data = await res.json();
@@ -67,6 +86,7 @@ function App() {
   return (
     <div style={{ padding: "20px" }}>
 
+      {/* API Key Input */}
       <input
         type="password"
         placeholder="Paste Groq API key"
@@ -75,6 +95,23 @@ function App() {
         style={{ width: "100%", marginBottom: "10px" }}
       />
     
+    {/*settings panel*/ }
+      <div style={{ marginBottom: "20px", border: "1px solid #ccc", padding: "15px" }}>
+        <h2>Settings</h2>
+        <p>Choose suggestion types:</p>
+
+        {["Ask", "Insight", "Clarify", "Action Item", "Risk", "Follow-up", "Summary"].map((type) => (
+          <label key={type} style={{ display: "block", margin: "6px 0" }}>
+            <input
+              type="checkbox"
+              checked={suggestionTypes.includes(type)}
+              onChange={() => toggleSuggestionType(type)}
+            />
+            {" "}{type}
+          </label>
+        ))}
+      </div>
+
     <div style={{ display: "flex", gap: "20px", padding: "20px" }}>
       
       {/* LEFT: Transcript */}

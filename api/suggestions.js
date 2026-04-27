@@ -2,14 +2,19 @@ import Groq from "groq-sdk";
 
 export default async function handler(req, res) {
   const apiKey = req.headers["x-groq-api-key"];
-  const { transcript } = req.body;
+  const { transcript, suggestionTypes = ["Ask", "Insight", "Clarify", "Action Item", "Risk", "Follow-up", "Summary"] } = req.body;
 
   const groq = new Groq({ apiKey });
 
   const completion = await groq.chat.completions.create({
     model: "openai/gpt-oss-120b",
     messages: [
-      { role: "system", content: "You are a helpful assistant that generates suggestions based on meeting transcripts. You provide three types of suggestions: 1) Ask: A clarifying question to ask the team, 2) Insight: An insight or observation about the project, 3) Clarify: A point that needs clarification or further discussion." },
+      { role: "system", 
+        content: `You are a helpful assistant that generates suggestions based on meeting transcripts.
+        The user has selected the following categories: ${suggestionTypes.join(", ")}.
+        For each category, generate one suggestion based on the transcript. Format your response as follows:
+        Category: [Your suggestion here]`
+      },
       { role: "user", content: transcript },
     ],
   });
