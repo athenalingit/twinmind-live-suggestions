@@ -29,7 +29,7 @@ function App() {
 
   setAudioUrl(URL.createObjectURL(blob));
 
-      const res = await fetch("api/transcribe", {
+      const res = await fetch("/api/transcribe", {
         method: "POST",
         headers: {
           "x-groq-api-key": apiKey},
