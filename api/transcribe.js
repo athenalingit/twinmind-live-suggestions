@@ -8,12 +8,6 @@ export default async function handler(req, res) {
   const apiKey = req.headers["x-groq-api-key"];
   const groq = new Groq({ apiKey });
 
-  const form = formidable({
-  multiples: false,
-  keepExtensions: true,
-  uploadDir: "/tmp",
-});
-
   const chunks = [];
   for await (const chunk of req) {
     chunks.push(chunk);
